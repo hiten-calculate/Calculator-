@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Calculator</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      margin: 0;
+    }
+    .calculator {
+      background: #fff;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 280px;
+    }
+    input {
+      width: 100%;
+      height: 50px;
+      font-size: 22px;
+      margin-bottom: 15px;
+      text-align: right;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      padding: 5px;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      height: 50px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background: #2575fc;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #6a11cb;
+    }
+    .history {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: left;
+      max-height: 100px;
+      overflow-y: auto;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" disabled>
+    <div class="buttons">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="backspace()">⌫</button>
+      <button onclick="append('%')">%</button>
+      <button onclick="append('/')">÷</button>
+
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('*')">×</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('-')">−</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('+')">+</button>
+
+      <button onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="square()">x²</button>
+      <button onclick="sqrt()">√</button>
+      <button onclick="calculate()">=</button>
+    </div>
+
+    <div class="history" id="history"></div>
+  </div>
+
+  <script>
+    let display = document.getElementById("display");
+    let historyDiv = document.getElementById("history");
+    let history = [];
+
+    function append(value) {
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = "";
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        let result = eval(display.value);
+        history.unshift(display.value + " = " + result);
+        if (history.length > 5) history.pop();
+        updateHistory();
+        display.value = result;
+      } catch {
+        display.value = "Error";
+      }
+    }
+
+    function square() {
+      if (display.value !== "") {
+        let num = eval(display.value);
+        let result = num * num;
+        history.unshift(display.value + "² = " + result);
+        if (history.length > 5) history.pop();
+        updateHistory();
+        display.value = result;
+      }
+    }
+
+    function sqrt() {
+      if (display.value !== "") {
+        let num = eval(display.value);
+        let result = Math.sqrt(num);
+        history.unshift("√" + display.value + " = " + result);
+        if (history.length > 5) history.pop();
+        updateHistory();
+        display.value = result;
+      }
+    }
+
+    function updateHistory() {
+      historyDiv.innerHTML = "<b>History:</b><br>" + history.join("<br>");
+    }
+
+    // ✅ Keyboard Support
+    document.addEventListener("keydown", function(event) {
+      if (!isNaN(event.key) || "+-*/.%".includes(event.key)) {
+        append(event.key);
+      } else if (event.key === "Enter") {
+        calculate();
+      } else if (event.key === "Backspace") {
+        backspace();
+      } else if (event.key === "Escape") {
+        clearDisplay();
+      }
+    });
+  </script>
+</body>
+</html>
